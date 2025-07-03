@@ -1,17 +1,18 @@
-# Last edited 2025-07-02 for test
-
-
 name: Automated Community Note Writer
 
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *' # Run every hour
+  workflow_dispatch: # Allow manual runs
 
 jobs:
   run-note-writer:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          repository: AppleLamps/template-api-note-writer
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,20 +26,15 @@ jobs:
 
       - name: Download and install xurl binary
         run: |
-          LATEST_URL=$(curl -s https://api.github.com/repos/CommunityNotes/xurl/releases/latest \
-            | grep "browser_download_url" \
-            | grep "linux" \
-            | grep -v ".sig" \
-            | cut -d '"' -f 4)
+          LATEST_URL=$(curl -s https://api.github.com/repos/CommunityNotes/xurl/releases/latest | jq -r '.assets[] | select(.name | contains("linux-latest")) | .browser_download_url')
           wget -O xurl "$LATEST_URL"
           chmod +x xurl
           sudo mv xurl /usr/local/bin/
 
-      - name: Run Note Writer
-        run: |
-          python src/main.py
+      - name: Run main script
         env:
-          X_API_KEY: ${{ secrets.X_API_KEY }}
-          X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+          API_KEY: ${{ secrets.API_KEY }}
+          API_SECRET: ${{ secrets.API_SECRET }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python main.py
