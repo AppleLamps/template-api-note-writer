@@ -20,6 +20,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Install xurl
+        run: |
+          brew install communitynotes/x/url/xurl
+
       - name: Run Note Writer
         run: |
           python src/main.py
