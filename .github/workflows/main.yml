@@ -20,10 +20,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install xurl
+      - name: Download and install xurl binary
         run: |
-          curl -sS https://xurl.sh/install | bash
-          echo "$HOME/.xurl/bin" >> $GITHUB_PATH
+          wget -O xurl https://github.com/CommunityNotes/xurl/releases/latest/download/xurl-linux-amd64
+          chmod +x xurl
+          sudo mv xurl /usr/local/bin/
 
       - name: Run Note Writer
         run: |
