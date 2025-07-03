@@ -1,4 +1,5 @@
 import argparse
+import os
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 
@@ -58,6 +59,15 @@ def main(
     Get up to `num_posts` recent posts eligible for notes and write notes for them.
     If `dry_run` is True, do not submit notes to the API, just print them to the console.
     """
+    
+    # Check authentication setup
+    bearer_token = os.getenv('BEARER_TOKEN')
+    if not bearer_token:
+        print("ERROR: BEARER_TOKEN environment variable is not set!")
+        print("Please ensure the Bearer Token is properly configured in your environment.")
+        return
+    
+    print(f"Authentication configured successfully (Bearer Token: {bearer_token[:10]}...)")
 
     print(f"Getting up to {num_posts} recent posts eligible for notes")
     eligible_posts: List[Post] = get_posts_eligible_for_notes(max_results=num_posts)
