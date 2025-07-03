@@ -31,6 +31,25 @@ jobs:
           chmod +x xurl
           sudo mv xurl /usr/local/bin/
 
+      - name: Configure xurl authentication
+        env:
+          BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+        run: |
+          # Test xurl installation
+          if ! xurl --version > /dev/null 2>&1; then
+            echo "xurl installation verification failed"
+            exit 1
+          fi
+          
+          # Test API access with Bearer Token
+          if ! xurl -H "Authorization: Bearer $BEARER_TOKEN" "/2/tweets/by/username/twitter" > /dev/null 2>&1; then
+            echo "xurl authentication test failed"
+            echo "Please verify your Bearer Token is set correctly in repository secrets"
+            exit 1
+          fi
+          
+          echo "xurl authentication configured successfully"
+
       - name: Run main script
         env:
           BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
@@ -38,3 +57,4 @@ jobs:
           API_SECRET: ${{ secrets.API_SECRET }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: python src/main.py
+
