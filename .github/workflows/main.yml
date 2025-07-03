@@ -22,7 +22,12 @@ jobs:
 
       - name: Download and install xurl binary
         run: |
-          wget -O xurl https://github.com/CommunityNotes/xurl/releases/latest/download/xurl-linux-amd64
+          LATEST_URL=$(curl -s https://api.github.com/repos/CommunityNotes/xurl/releases/latest \
+            | grep "browser_download_url" \
+            | grep "linux" \
+            | grep -v ".sig" \
+            | cut -d '"' -f 4)
+          wget -O xurl "$LATEST_URL"
           chmod +x xurl
           sudo mv xurl /usr/local/bin/
 
