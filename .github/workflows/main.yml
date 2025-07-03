@@ -26,7 +26,8 @@ jobs:
 
       - name: Download and install xurl binary
         run: |
-          wget -O xurl "https://github.com/CommunityNotes/xurl/releases/download/v0.3.0/xurl-linux-latest"
+          wget -O xurl "https://github.com/xdevplatform/xurl/releases/download/v0.4.6/xurl_Linux_x86_64.tar.gz"
+          tar -xvf xurl_Linux_x86_64.tar.gz
           chmod +x xurl
           sudo mv xurl /usr/local/bin/
 
